@@ -1,0 +1,10 @@
+# Ignore heavy data and local database state
+qdrant_data/
+ollama_data/
+.venv/
+__pycache__/
+*.log
+
+# Ignore OS specific files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,289 @@
+{
+  "name": "Test_generator",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -496,
+        -32
+      ],
+      "id": "08eb5691-a300-458c-8734-28fea14d8712",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "content": "## Test case generator\n###' Read the requirements pdf file and generate an automatic .py code to test that requirement \n",
+        "height": 272,
+        "width": 1264
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        -128
+      ],
+      "id": "9f7e348f-ab6a-4912-9a8d-3096d583d8f4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Reviewer\n#### Reviews the generated .py code and gives out output as text file\n\n",
+        "height": 288,
+        "width": 1264
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        176
+      ],
+      "id": "84fd7285-f544-47cf-b9e3-7e5daa6e600d",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// This ensures the binary data is 'flat' and visible to the Write node\nreturn [\n  {\n    json: {}, \n    binary: {\n      data: {\n        data: Buffer.from($input.item.json.answer).toString('base64'),\n        fileName: 'test_simple.py',\n        fileExtension: 'py',\n        mimeType: 'text/x-python'\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        256,
+        -32
+      ],
+      "id": "5642c926-651f-4e89-b776-0f9d33252dee",
+      "name": "Converts to .py file"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://rag-service:8000/ingest",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "file_path",
+              "value": "/data/requirements.pdf"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -208,
+        -32
+      ],
+      "id": "a783fd64-4bcb-4564-8fb1-02b5ffe3bbab",
+      "name": "Ingest pdf into RAG pipeline"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://rag-service:8000/query",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "question",
+              "value": "Based on the attached requirements PDF, generate a complete Python pytest file. Include test cases for the happy path, edge cases, and error handling for the login and data validation logic. Use clear assertions and mock any external API calls. Just return the python code only without assumptions. The python code should be standalone and should be able to run on its own.\n\nDont put such ```python ``` such statement in the top and bottom. The script should be a standalone pytest script"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        16,
+        -32
+      ],
+      "id": "c651f94a-465a-4d8e-89c1-e007b63618a1",
+      "name": "Generate the test case"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://rag-service:8000/query",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "=question",
+              "value": "=Here is a generated pytest script from the mode:\n{{ $json.answer }}\n\nCross-reference this with the requirements in the uploaded PDF. Check if it correctly tests the 'Happy Path' and if all imports are handled. If there are errors, just list the review points. Else say \"no review points\"."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -480,
+        288
+      ],
+      "id": "ccf09b05-d4ad-4b19-a4a4-cec1e514d642",
+      "name": "Test case reviewer"
+    },
+    {
+      "parameters": {
+        "jsCode": "// This ensures the binary data is 'flat' and visible to the Write node\nreturn [\n  {\n    json: {}, \n    binary: {\n      data: {\n        data: Buffer.from($input.item.json.answer).toString('base64'),\n        fileName: 'review_points.txt',\n        fileExtension: 'txt',\n        mimeType: 'text/plain'\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        288
+      ],
+      "id": "6b8fb5ba-6dcf-477c-b31c-ec7d8a2011e1",
+      "name": "Convert the comments to .txt"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/root/.n8n-files/test_simple.py",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        -32
+      ],
+      "id": "7c0b876f-bab7-4cbc-9899-ebe3c36b1777",
+      "name": "Saves the .py file to disk"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/root/.n8n-files/review_points.txt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        288
+      ],
+      "id": "42b88b57-a1df-4dfb-995e-8e8030710c70",
+      "name": "Write comment file to Disk"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Ingest pdf into RAG pipeline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Converts to .py file": {
+      "main": [
+        [
+          {
+            "node": "Saves the .py file to disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ingest pdf into RAG pipeline": {
+      "main": [
+        [
+          {
+            "node": "Generate the test case",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate the test case": {
+      "main": [
+        [
+          {
+            "node": "Converts to .py file",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Test case reviewer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test case reviewer": {
+      "main": [
+        [
+          {
+            "node": "Convert the comments to .txt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert the comments to .txt": {
+      "main": [
+        [
+          {
+            "node": "Write comment file to Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Saves the .py file to disk": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "ab276f00-10dd-45e4-ae0a-bfe488e78757",
+  "meta": {
+    "instanceId": "dc3eff9ae80e1f5c12ecc45add44c2125e8ec3584f66d26223017d04fed0aded"
+  },
+  "id": "m6uIgPIbbz9rZ9C4",
+  "tags": [
+    {
+      "name": "Test_generator",
+      "id": "6eic3p6RF7No5Fkh",
+      "updatedAt": "2026-02-28T17:56:38.833Z",
+      "createdAt": "2026-02-28T17:56:38.833Z"
+    },
+    {
+      "name": "RAG",
+      "id": "uOTAk3dxhX9PfkBc",
+      "updatedAt": "2026-02-28T17:56:27.597Z",
+      "createdAt": "2026-02-28T17:56:27.597Z"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+reportlab
+langchain-community
+langchain-ollama
+langchain-qdrant
+pypdf
+qdrant_client
