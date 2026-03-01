@@ -1,0 +1,8 @@
+# Local Data (Root Level)
+qdrant_data/
+ollama_data/
+
+# Service-Specific Data (Nested)
+rag-service/.venv/
+rag-service/__pycache__/
+rag-service/data/*.pdf
