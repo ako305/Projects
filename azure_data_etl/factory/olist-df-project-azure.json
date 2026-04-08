@@ -1,9 +1,0 @@
-{
-	"name": "olist-df-project-azure",
-	"location": "centralindia",
-	"identity": {
-		"type": "SystemAssigned",
-		"principalId": "9bb22c10-1a7c-498b-a815-0193e24b57fd",
-		"tenantId": "1e57e2f8-2e49-4836-b7f2-2379857821aa"
-	}
-}
