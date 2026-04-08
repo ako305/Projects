@@ -1,0 +1,18 @@
+{
+	"name": "fileSQLDB",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "MySql",
+		"typeProperties": {
+			"server": "2yeisb.h.filess.io",
+			"port": 3306,
+			"database": "olistproject_pencilleaf",
+			"username": "olistproject_pencilleaf",
+			"sslMode": 1,
+			"useSystemTrustStore": 0,
+			"driverVersion": "v2",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDFFRjk2RjMyLTNFNkYtNDM4OC1BRDRDLTBERjEzNjRFNEJBNV9hNmZjZTk0NC01NzRlLTRkMjctOWYzZS01ZmFhZGI2ZWZjNDkiDQp9"
+		}
+	}
+}
