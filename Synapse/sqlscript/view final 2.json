@@ -1,0 +1,17 @@
+{
+	"name": "view final 2",
+	"properties": {
+		"content": {
+			"query": "-- Batch 1: Create the view\nCREATE VIEW gold.final2\nAS \nSELECT\n    *\nFROM\n    OPENROWSET(\n        BULK 'https://oliststorage305.dfs.core.windows.net/olistdata/silver/*.parquet',\n        FORMAT = 'PARQUET'\n    ) AS result2\nWHERE order_status = 'delivered';\nGO  -- This is the magic word that separates the batches\n\n-- Batch 2: Use the view\nSELECT * FROM gold.final2;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "olist",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
